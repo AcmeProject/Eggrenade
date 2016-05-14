@@ -1,0 +1,8 @@
+#Should we destroy the environment?
+Destroy: true
+#Power of the TNT blast.
+Power: 5
+#Delay in seconds before the egg explodes.
+Delay: 0
+#Set cost to 0 to disable economy support.
+Cost: 0
