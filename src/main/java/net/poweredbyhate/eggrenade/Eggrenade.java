@@ -3,13 +3,16 @@ package net.poweredbyhate.eggrenade;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -35,6 +38,15 @@ public class Eggrenade extends JavaPlugin implements Listener {
         if (ev.getEntity() instanceof Egg && ev.getEntity().getShooter() instanceof Player) {
             Player p = (Player) ev.getEntity().getShooter();
             if (p.hasPermission("eggrenade.active")) goBoom(p, ev.getEntity());
+        }
+    }
+
+    @EventHandler
+    public void onLaunch(ProjectileLaunchEvent ev) {
+        if (ev.getEntity() instanceof Egg && ev.getEntity().getShooter() instanceof Player) {
+            if (((Player) ev.getEntity().getShooter()).hasPermission("eggrenade.active")) {
+                setTrails(ev.getEntity());
+            }
         }
     }
 
@@ -83,6 +95,19 @@ public class Eggrenade extends JavaPlugin implements Listener {
         }
         econ = rsp.getProvider();
         return econ != null;
+    }
+
+    public void setTrails(final Projectile projectile) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (projectile.isDead() || projectile.isOnGround()) {
+                    cancel();
+                    return;
+                }
+                projectile.getWorld().playEffect(projectile.getLocation(), Effect.MOBSPAWNER_FLAMES, 0);
+            }
+        }.runTaskAsynchronously(this);
     }
 
 }
