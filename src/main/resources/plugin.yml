@@ -1,5 +1,5 @@
 name: Eggrenade
-version: 1.1
+version: 1.2
 author: LaxWasHere
 softdepend: [Vault]
 main: net.poweredbyhate.eggrenade.Eggrenade

@@ -4,5 +4,7 @@ Destroy: true
 Power: 5
 #Delay in seconds before the egg explodes.
 Delay: 0
+#How long before the player can throw again? (In seconds)
+Cooldown: 10
 #Set cost to 0 to disable economy support.
 Cost: 0

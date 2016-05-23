@@ -3,6 +3,7 @@ package net.poweredbyhate.eggrenade;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Egg;
@@ -17,6 +18,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class Eggrenade extends JavaPlugin implements Listener {
@@ -26,8 +29,10 @@ public class Eggrenade extends JavaPlugin implements Listener {
      */
 
     public static Economy econ = null;
+    public ArrayList<UUID> cooldown = new ArrayList<>();
 
     public void onEnable() {
+        getConfig().addDefault("Cooldown",10);
         Bukkit.getPluginManager().registerEvents(this, this);
         saveDefaultConfig();
         checkVault();
@@ -44,8 +49,21 @@ public class Eggrenade extends JavaPlugin implements Listener {
     @EventHandler
     public void onLaunch(ProjectileLaunchEvent ev) {
         if (ev.getEntity() instanceof Egg && ev.getEntity().getShooter() instanceof Player) {
-            if (((Player) ev.getEntity().getShooter()).hasPermission("eggrenade.active")) {
+            final Player p = (Player) ev.getEntity().getShooter();
+            if (cooldown.contains(p.getUniqueId())) {
+                p.sendMessage(ChatColor.RED + "You egg is still in cooldown!");
+                ev.setCancelled(true);
+                return;
+            }
+            if (p.hasPermission("eggrenade.active")) {
                 setTrails(ev.getEntity());
+                cooldown.add(p.getUniqueId());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        cooldown.remove(p.getUniqueId());
+                    }
+                }.runTaskLater(this, 20 * getConfig().getInt("Cooldown"));
             }
         }
     }
