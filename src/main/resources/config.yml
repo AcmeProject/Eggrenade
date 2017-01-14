@@ -8,3 +8,7 @@ Delay: 0
 Cooldown: 10
 #Set cost to 0 to disable economy support.
 Cost: 0
+#Worlds where this plugin will not work.
+disabled_worlds:
+  - world
+  - world_nether

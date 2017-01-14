@@ -40,6 +40,9 @@ public class Eggrenade extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onHit(ProjectileHitEvent ev) {
+        if (getConfig().getStringList("disabled_worlds").contains(ev.getEntity().getWorld().toString())) {
+            return;
+        }
         if (ev.getEntity() instanceof Egg && ev.getEntity().getShooter() instanceof Player) {
             Player p = (Player) ev.getEntity().getShooter();
             if (p.hasPermission("eggrenade.active")) goBoom(p, ev.getEntity());
@@ -51,7 +54,7 @@ public class Eggrenade extends JavaPlugin implements Listener {
         if (ev.getEntity() instanceof Egg && ev.getEntity().getShooter() instanceof Player) {
             final Player p = (Player) ev.getEntity().getShooter();
             if (cooldown.contains(p.getUniqueId())) {
-                p.sendMessage(ChatColor.RED + "You egg is still in cooldown!");
+                p.sendMessage(ChatColor.RED + "Your egg is still in cooldown!");
                 ev.setCancelled(true);
                 return;
             }
